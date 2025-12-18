@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+.env.*
+
+# FastAPI / Uvicorn
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Migrations
+alembic/versions/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Tests / coverage
+.coverage
+htmlcov/
+.pytest_cache/
