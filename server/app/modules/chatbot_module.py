@@ -1,5 +1,5 @@
 from app.configs.llmapi_config import AI_MODEL, ChatConfig
-from app.modules.module.messages_module import MessageModel
+from app.db import MessageModel
 from sqlalchemy.orm import Session
 
 class ChatService:

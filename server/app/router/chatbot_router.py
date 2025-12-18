@@ -1,7 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
 from sqlalchemy.orm import Session
-from app.db import db_manager
-from app.modules.module.messages_module import MessageModel
+from app.db import db_manager,MessageModel
 from app.modules.chatbot_module import chat_service
 
 router = APIRouter()
