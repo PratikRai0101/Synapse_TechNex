@@ -30,20 +30,33 @@ export default function AdvancedPredictScreen() {
     'Debt',
     'Solution Oriented',
     'Other',
-  ];
+  ] as const;
 
-  const SUB_CATEGORY_OPTIONS = [
-    'FoFs Domestic', 'Arbitrage Mutual Funds', 'Childrens Funds', 'Dynamic Asset Allocation or Balanced Advantage',
-    'Sectoral / Thematic Mutual Funds', 'Banking and PSU Mutual Funds', 'Corporate Bond Mutual Funds', 'Credit Risk Funds',
-    'Dividend Yield Funds', 'Dynamic Bond', 'Large & Mid Cap Funds', 'Aggressive Hybrid Mutual Funds',
-    'Equity Savings Mutual Funds', 'Flexi Cap Funds', 'Floater Mutual Funds', 'Focused Funds',
-    'Large Cap Mutual Funds', 'FoFs Overseas', 'Gilt Mutual Funds', 'Medium to Long Duration Funds',
-    'Liquid Mutual Funds', 'Low Duration Funds', 'Medium Duration Funds', 'Mid Cap Mutual Funds',
-    'Money Market Funds', 'Index Funds', 'Overnight Mutual Funds', 'Value Funds',
-    'Conservative Hybrid Mutual Funds', 'Retirement Funds', 'Ultra Short Duration Funds', 'Short Duration Funds',
-    'Small Cap Mutual Funds', 'ELSS Mutual Funds', 'Fixed Maturity Plans', 'Multi Asset Allocation Mutual Funds',
-    'Multi Cap Funds', 'Contra Funds'
-  ];
+  type Category = typeof CATEGORY_OPTIONS[number];
+
+  const SUB_CATEGORY_OPTIONS: Record<Category, string[]> = {
+    'Equity': [
+      'Sectoral / Thematic Mutual Funds', 'Dividend Yield Funds', 'Large & Mid Cap Funds', 'Flexi Cap Funds',
+      'Focused Funds', 'Large Cap Mutual Funds', 'Mid Cap Mutual Funds', 'Index Funds', 'Value Funds',
+      'Small Cap Mutual Funds', 'ELSS Mutual Funds', 'Multi Cap Funds', 'Contra Funds',
+    ],
+    'Hybrid': [
+      'Arbitrage Mutual Funds', 'Dynamic Asset Allocation or Balanced Advantage', 'Aggressive Hybrid Mutual Funds',
+      'Equity Savings Mutual Funds', 'Conservative Hybrid Mutual Funds', 'Multi Asset Allocation Mutual Funds',
+    ],
+    'Debt': [
+      'Banking and PSU Mutual Funds', 'Corporate Bond Mutual Funds', 'Credit Risk Funds', 'Dynamic Bond',
+      'FoFs Domestic', 'FoFs Overseas', 'Gilt Mutual Funds', 'Medium to Long Duration Funds', 'Liquid Mutual Funds',
+      'Low Duration Funds', 'Medium Duration Funds', 'Money Market Funds', 'Overnight Mutual Funds',
+      'Ultra Short Duration Funds', 'Short Duration Funds', 'Fixed Maturity Plans', 'Floater Mutual Funds',
+    ],
+    'Solution Oriented': [
+      'Childrens Funds', 'Retirement Funds',
+    ],
+    'Other': [
+      'Dynamic Bond', 'Value Funds', 'Multi Cap Funds', 'Contra Funds',
+    ],
+  };
 
   const AMC_NAME_OPTIONS = [
     'Aditya Birla Sun Life Mutual Fund', 'Axis Mutual Fund', 'Bandhan Mutual Fund', 'Bank of India Mutual Fund',
@@ -149,7 +162,7 @@ export default function AdvancedPredictScreen() {
               style={{ color: '#000', backgroundColor: '#fff' }}
               onValueChange={v => setInput(i => ({ ...i, sub_category: v }))}
             >
-              {SUB_CATEGORY_OPTIONS.map(opt => (
+              {(SUB_CATEGORY_OPTIONS[input.category as Category] || []).map((opt: string) => (
                 <Picker.Item key={opt} label={opt} value={opt} />
               ))}
             </Picker>
