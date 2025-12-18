@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, X, MessageSquare } from 'lucide-react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("YOUR_GEMINI_API_KEY");
-const model = genAI.getGenerativeModel({ 
-  model: "gemini-1.5-flash",
-  systemInstruction: "You are SAMPATTAI Monolith, an elite AI wealth advisor. persona: cold, professional. Focus on monochromatic wealth management. All amounts in ₹."
-});
+// Temporarily using mock response - install @google/generative-ai to enable real Gemini API
+// const genAI = new GoogleGenerativeAI("YOUR_GEMINI_API_KEY");
+// const model = genAI.getGenerativeModel({ 
+//   model: "gemini-1.5-flash",
+//   systemInstruction: "You are SAMPATTAI Monolith, an elite AI wealth advisor. persona: cold, professional. Focus on monochromatic wealth management. All amounts in ₹."
+// });
 
 const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,9 +33,10 @@ const ChatWidget: React.FC = () => {
     setIsTyping(true);
 
     try {
-      const result = await model.generateContent(userMessage);
-      const response = await result.response;
-      setMessages(prev => [...prev, { role: 'ai', content: response.text() }]);
+      // Mock response until Gemini API is configured
+      await new Promise(resolve => setTimeout(resolve, 800));
+      const mockResponse = "The Vault acknowledges your inquiry. To unlock AI-powered wealth optimization, configure the Gemini API key in ChatWidget.tsx";
+      setMessages(prev => [...prev, { role: 'ai', content: mockResponse }]);
     } catch (error) {
       setMessages(prev => [...prev, { role: 'ai', content: "Vault protocols blocked. Verify API Key." }]);
     } finally {

@@ -13,7 +13,6 @@ import {
   Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PerformanceChart from './components/PerformanceChart';
 import RiskReturnGalaxy from './components/RiskReturnGalaxy';
 import WealthRing from './components/WealthRing';
 import FundExplorer from './components/FundExplorer';
@@ -24,7 +23,6 @@ import SettingsPanel from './components/SettingsPanel';
 import SarthiInterface from './components/SarthiInterface';
 import Hero from './components/Hero';
 import ChatWidget from './components/ChatWidget';
-import { MOCK_FUNDS } from './mockData';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }: { icon: any, label: string, active?: boolean, onClick?: () => void }) => (
   <button 
@@ -59,7 +57,12 @@ const App: React.FC = () => {
             <Hero onStartInvesting={() => setActiveTab('explore')} />
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8">
-                <PerformanceChart fund={MOCK_FUNDS[0]} />
+                {/* PerformanceChart now requires real data from API */}
+                <div className="glass p-10 h-[500px] rounded-[28px] border border-[var(--border)] flex items-center justify-center">
+                  <p className="text-[var(--text-muted)] text-center">
+                    Chart displays when exploring funds or from your portfolio. Click "Explore" to get started!
+                  </p>
+                </div>
               </div>
               <div className="lg:col-span-4">
                 <WealthVault compact />

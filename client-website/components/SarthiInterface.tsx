@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, History, Zap, Info } from 'lucide-react';
-import axios from 'axios';
 import LiquidGlassCard from './LiquidGlassCard';
 
 interface Message {
@@ -22,12 +21,14 @@ const SarthiInterface: React.FC = () => {
   const API_BASE_URL = "https://synapse-technex.onrender.com";
   const WS_BASE_URL = "ws://synapse-technex.onrender.com";
 
-  // 1. Fetch Message History via Axios
+  // 1. Fetch Message History via Fetch API
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/message-list/${sessionId}`);
-        const history = response.data.map((msg: any) => ({
+        const response = await fetch(`${API_BASE_URL}/message-list/${sessionId}`);
+        if (!response.ok) throw new Error('Failed to fetch history');
+        const data = await response.json();
+        const history = data.map((msg: any) => ({
           role: msg.role === 'model' ? 'ai' : 'user', // mapping DB roles to UI roles
           content: msg.content,
           timestamp: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
