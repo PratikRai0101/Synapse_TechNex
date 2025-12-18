@@ -81,14 +81,11 @@ function getTradingViewWidgetHtml(symbol: string, interval: string) {
 }
 
 
-const timeRanges = ['1M', '6M', '1Y', '3Y', '5Y', 'ALL'];
+const timeRanges = ['1M', '6M', '1Y'];
 const intervalMap: Record<string, string> = {
   '1M': 'D', // Daily
   '6M': 'W', // Weekly
   '1Y': 'M', // Monthly
-  '3Y': 'M',
-  '5Y': 'M',
-  'ALL': 'M',
 };
 
 

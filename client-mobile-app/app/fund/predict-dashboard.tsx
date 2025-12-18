@@ -12,8 +12,44 @@ export default function PredictDashboard() {
     min_sip: Number(params.min_sip) || 5000,
     fund_age_yr: Number(params.fund_age_yr) || 5,
     category: params.category?.toString() || 'Equity',
-    sub_category: params.sub_category?.toString() || 'FoFs Domestic',
+    sub_category: params.sub_category?.toString() || '',
   });
+
+  // Category and sub-category lists
+  const CATEGORY_OPTIONS = [
+    'Equity',
+    'Hybrid',
+    'Debt',
+    'Solution Oriented',
+    'Other',
+  ] as const;
+
+  type Category = typeof CATEGORY_OPTIONS[number];
+
+  const SUB_CATEGORY_OPTIONS: Record<Category, string[]> = {
+    'Equity': [
+      'Sectoral / Thematic Mutual Funds', 'Dividend Yield Funds', 'Large & Mid Cap Funds', 'Flexi Cap Funds',
+      'Focused Funds', 'Large Cap Mutual Funds', 'Mid Cap Mutual Funds', 'Index Funds', 'Value Funds',
+      'Small Cap Mutual Funds', 'ELSS Mutual Funds', 'Multi Cap Funds', 'Contra Funds',
+    ],
+    'Hybrid': [
+      'Arbitrage Mutual Funds', 'Dynamic Asset Allocation or Balanced Advantage', 'Aggressive Hybrid Mutual Funds',
+      'Equity Savings Mutual Funds', 'Conservative Hybrid Mutual Funds', 'Multi Asset Allocation Mutual Funds',
+    ],
+    'Debt': [
+      'Banking and PSU Mutual Funds', 'Corporate Bond Mutual Funds', 'Credit Risk Funds', 'Dynamic Bond',
+      'FoFs Domestic', 'FoFs Overseas', 'Gilt Mutual Funds', 'Medium to Long Duration Funds', 'Liquid Mutual Funds',
+      'Low Duration Funds', 'Medium Duration Funds', 'Money Market Funds', 'Overnight Mutual Funds',
+      'Ultra Short Duration Funds', 'Short Duration Funds', 'Fixed Maturity Plans', 'Floater Mutual Funds',
+    ],
+    'Solution Oriented': [
+      'Childrens Funds', 'Retirement Funds',
+    ],
+    'Other': [
+      'Dynamic Bond', 'Value Funds', 'Multi Cap Funds', 'Contra Funds',
+    ],
+  };
+
   // All other fund details auto-filled from params
   const fundDetails = {
     min_lumpsum: Number(params.min_lumpsum) || 10000,
@@ -112,9 +148,9 @@ export default function PredictDashboard() {
               style={{ color: '#000', backgroundColor: '#fff' }}
               onValueChange={v => setInput(i => ({ ...i, category: v }))}
             >
-              <Picker.Item label="Equity" value="Equity" />
-              <Picker.Item label="Debt" value="Debt" />
-              <Picker.Item label="Hybrid" value="Hybrid" />
+              {CATEGORY_OPTIONS.map(opt => (
+                <Picker.Item key={opt} label={opt} value={opt} />
+              ))}
             </Picker>
           </View>
         </View>
@@ -127,10 +163,9 @@ export default function PredictDashboard() {
               style={{ color: '#000', backgroundColor: '#fff' }}
               onValueChange={v => setInput(i => ({ ...i, sub_category: v }))}
             >
-              <Picker.Item label="FoFs Domestic" value="FoFs Domestic" />
-              <Picker.Item label="Large Cap" value="Large Cap" />
-              <Picker.Item label="Small Cap" value="Small Cap" />
-              <Picker.Item label="Mid Cap" value="Mid Cap" />
+              {(SUB_CATEGORY_OPTIONS[input.category as Category] || []).map((opt: string) => (
+                <Picker.Item key={opt} label={opt} value={opt} />
+              ))}
             </Picker>
           </View>
         </View>
@@ -161,7 +196,6 @@ export default function PredictDashboard() {
           <Text style={styles.resultValue}>{result.returns_3yr ?? '--'}%</Text>
           <Text style={styles.resultLabel}>5 Year Return:</Text>
           <Text style={styles.resultValue}>{result.returns_5yr ?? '--'}%</Text>
-          <Text style={{ color: '#000', fontSize: 12, marginTop: 8 }}>Raw: {JSON.stringify(result)}</Text>
         </View>
       )}
     </ScrollView>
