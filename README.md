@@ -1,8 +1,19 @@
 # Sampatti AI
+**Live Link** : https://synapse-tech-nex.vercel.app/ 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8ab91bb0-f552-43ef-b0ad-bc051c37d1d7" width="45%" />
+  <img src="https://github.com/user-attachments/assets/00a28018-73f6-42f7-9f4e-019191c19bd6" width="45%" />
+</p>
 
-<img width="1440" height="900" alt="Sampatti AI Banner" src="https://github.com/user-attachments/assets/0950ec54-65f1-4804-bfe1-03e1fa6fe5a9" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6ced0ea3-4ba3-4e8d-b575-f893299453a4" width="45%" />
+  <img src="https://github.com/user-attachments/assets/0950ec54-65f1-4804-bfe1-03e1fa6fe5a9" width="45%" />
+</p>
 
-**Sampatti AI** is a comprehensive financial ecosystem designed to revolutionize mutual fund investing. It combines machine learning-based return predictions with a voice-enabled Generative AI advisor to help users make data-backed financial decisions.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/544271db-294a-48b5-82ac-51746d8115e9" width="40%" />
+</p>
+*Sampatti AI* is a comprehensive financial ecosystem designed to revolutionize mutual fund investing. It combines machine learning-based return predictions with a voice-enabled Generative AI advisor to help users make data-backed financial decisions.
 
 While the flagship experience is built natively for **macOS** using SwiftUI, Sampatti AI is a cross-platform solution. The predictive engine and AI backend serve a **Web App** and a **Mobile App**, ensuring users can access their financial insights from any device.
 
