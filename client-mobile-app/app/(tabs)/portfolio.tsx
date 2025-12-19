@@ -9,6 +9,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { CircularProgress } from 'react-native-svg-circular-progress';
 import { MUTUAL_FUND_CATEGORIES } from '../../constants/funds';
 
 // List of all AMC names (from advanced-predict.tsx)
@@ -172,9 +173,6 @@ export default function PortfolioScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Top Mutual Fund Predictions</Text>
           <TouchableOpacity style={styles.profileButton}>
             <Ionicons name="person-add" size={20} color="black" />
@@ -183,12 +181,17 @@ export default function PortfolioScreen() {
 
         {/* Net Worth & Chart */}
         <View style={styles.chartSection}>
-          <Text style={styles.netWorthLabel}>NET WORTH</Text>
-          <Text style={styles.netWorthValue}>₹12,50,000</Text>
 
           <View style={styles.chartContainer}>
-            {/* Donut Chart with dynamic segment */}
-            <View style={styles.donutChart}>
+            {/* SVG Donut Chart for accurate segments */}
+            <CircularProgress
+              percentage={selectedPercent}
+              size={280}
+              progressWidth={120}
+              donutColor="#111827"
+              blankColor="#E5E7EB"
+              fillColor="#fff"
+            >
               <View style={styles.donutInner}>
                 <Text style={styles.chartLabel}>{activeTab.toUpperCase()}</Text>
                 <Text style={styles.chartValue}>{selectedPercent}<Text style={styles.percentSymbol}>%</Text></Text>
@@ -197,32 +200,7 @@ export default function PortfolioScreen() {
                   <Text style={styles.chartBadgeText}>+12.4%</Text>
                 </View>
               </View>
-            </View>
-            {/* Simulated segments for each category */}
-            {/* Draw colored arcs for each category's percent */}
-            {Object.entries(categoryDistribution).map(([cat, percent], idx) => {
-              // Calculate rotation and color for each segment
-              const startAngle = Object.entries(categoryDistribution)
-                .slice(0, idx)
-                .reduce((sum, [, p]) => sum + p, 0) * 3.6 - 90; // -90 to start at top
-              const segmentColor = cat === activeTab ? '#111827' : '#E5E7EB';
-              return (
-                <View
-                  key={cat}
-                  style={[
-                    styles.segment,
-                    {
-                      borderTopColor: segmentColor,
-                      borderRightColor: segmentColor,
-                      transform: [
-                        { rotate: `${startAngle}deg` },
-                        { scaleX: percent / 100 },
-                      ],
-                    },
-                  ]}
-                />
-              );
-            })}
+            </CircularProgress>
           </View>
         </View>
 

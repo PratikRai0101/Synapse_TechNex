@@ -300,7 +300,7 @@ export default function GalaxyViewScreen() {
       </View>
 
       {/* X Axis Label for Risk - move above grid */}
-      <View style={{ position: 'absolute', left: 60, right: 50, top: 520, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', zIndex: 30 }} pointerEvents="none">
+      <View style={{ position: 'absolute', left: 60, right: 50, top: 480, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', zIndex: 30 }} pointerEvents="none">
         <Text style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>LOW RISK (X)</Text>
       </View>
       {/* Overlay Card(s) - stack 3, frontIdx is on top */}

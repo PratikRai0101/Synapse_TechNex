@@ -9,13 +9,8 @@ export default function AnalysisTabScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Analysis</Text>
+        <Text style={styles.title}>Galaxy View Analysis</Text>
         <Text style={styles.subtitle}>Deep dive into your portfolio performance.</Text>
-        
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/analysis')}>
-          <Text style={styles.buttonText}>View Cost vs. Growth</Text>
-          <Ionicons name="arrow-forward" size={20} color="white" />
-        </TouchableOpacity>
         
         <TouchableOpacity style={styles.button} onPress={() => router.push('/galaxy')}>
           <Text style={styles.buttonText}>Open Galaxy View</Text>
