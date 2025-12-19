@@ -1,6 +1,44 @@
-import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+// Tab categories for the UI
+  const tabs = [
+    'Equity',
+    'Hybrid',
+    'Debt',
+    'Solution Oriented',
+    'Other',
+  ];
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { MUTUAL_FUND_CATEGORIES } from '../../constants/funds';
+
+// List of all AMC names (from advanced-predict.tsx)
+const AMC_NAME_OPTIONS = [
+  'Aditya Birla Sun Life Mutual Fund', 'Axis Mutual Fund', 'Bandhan Mutual Fund', 'Bank of India Mutual Fund',
+  'Baroda BNP Paribas Mutual Fund', 'Edelweiss Mutual Fund', 'Canara Robeco Mutual Fund', 'DSP Mutual Fund',
+  'Franklin Templeton Mutual Fund', 'HDFC Mutual Fund', 'HSBC Mutual Fund', 'ICICI Prudential Mutual Fund',
+  'IDBI Mutual Fund', 'IIFL Mutual Fund', 'Indiabulls Mutual Fund', 'Invesco Mutual Fund', 'ITI Mutual Fund',
+  'JM Financial Mutual Fund', 'Kotak Mahindra Mutual Fund', 'L&T Mutual Fund', 'LIC Mutual Fund',
+  'Mahindra Manulife Mutual Fund', 'Mirae Asset Mutual Fund', 'Motilal Oswal Mutual Fund', 'Navi Mutual Fund',
+  'Nippon India Mutual Fund', 'PPFAS Mutual Fund', 'PGIM India Mutual Fund', 'Quant Mutual Fund',
+  'Quantum Mutual Fund', 'SBI Mutual Fund', 'Shriram Mutual Fund', 'Sundaram Mutual Fund', 'Tata Mutual Fund',
+  'Taurus Mutual Fund', 'Trust Mutual Fund', 'Union Mutual Fund', 'UTI Mutual Fund', 'WhiteOak Capital Mutual Fund'
+];
+
+// --- Top Funds Recommendation Logic ---
+// Flatten all funds from all categories
+const allFunds = MUTUAL_FUND_CATEGORIES.flatMap(cat => cat.funds.map(fund => ({
+  ...fund,
+  category: cat.title,
+})));
+
+// Simulate predicted returns for each fund (replace with API if needed)
+const fundsWithReturns = allFunds.map(fund => ({
+  ...fund,
+  predictedReturn: (Math.random() * 20 + 5).toFixed(2), // 5% to 25%
+}));
+
+// Sort by predicted return descending
+const topFunds = fundsWithReturns.sort((a, b) => Number(b.predictedReturn) - Number(a.predictedReturn)).slice(0, 5);
 
 const holdings = [
   {
@@ -37,10 +75,97 @@ const holdings = [
   },
 ];
 
-const tabs = ['Equity', 'Debt', 'Gold', 'Thematic'];
+
+
+// Map category to a valid sub_category (first option from advanced-predict.tsx)
+const SUB_CATEGORY_MAP: Record<string, string> = {
+  'Equity': 'Large Cap Mutual Funds',
+  'Hybrid': 'Aggressive Hybrid Mutual Funds',
+  'Debt': 'Corporate Bond Mutual Funds',
+  'Solution Oriented': 'Retirement Funds',
+  'Other': 'Multi Cap Funds',
+};
 
 export default function PortfolioScreen() {
   const [activeTab, setActiveTab] = useState('Equity');
+  const [topFundsByAMC, setTopFundsByAMC] = React.useState<Record<string, any[]>>({});
+  const [topFundsErrorsByAMC, setTopFundsErrorsByAMC] = React.useState<Record<string, string>>({});
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    setLoading(true);
+    const fetchAll = async () => {
+      const results: Record<string, any[]> = {};
+      const errors: Record<string, string> = {};
+      await Promise.all(AMC_NAME_OPTIONS.map(async (amc) => {
+        try {
+          const body = {
+            min_sip: 5000,
+            fund_age_yr: 5,
+            category: activeTab,
+            sub_category: SUB_CATEGORY_MAP[activeTab] || '',
+            min_lumpsum: 10000,
+            expense_ratio: 1.5,
+            fund_size_cr: 2000,
+            sortino: 0.5,
+            alpha: 2.0,
+            sd: 10.0,
+            beta: 1.0,
+            sharpe: 0.8,
+            risk_level: 3,
+            amc_name: amc,
+            rating: 4.5,
+          };
+          const res = await fetch('https://pred-mod-776087882401.europe-west1.run.app/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (data.detail) {
+            errors[amc] = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
+            results[amc] = [];
+          } else if (Array.isArray(data)) {
+            results[amc] = data.sort((a: any, b: any) => (b.returns_3yr ?? 0) - (a.returns_3yr ?? 0)).slice(0, 3);
+          } else if (data && data.funds) {
+            results[amc] = data.funds.sort((a: any, b: any) => (b.returns_3yr ?? 0) - (a.returns_3yr ?? 0)).slice(0, 3);
+          } else if (data && typeof data === 'object' && data.returns_3yr !== undefined) {
+            results[amc] = [data];
+          } else {
+            results[amc] = [];
+          }
+        } catch (err) {
+          errors[amc] = 'Network or parsing error';
+          results[amc] = [];
+        }
+      }));
+      setTopFundsByAMC(results);
+      setTopFundsErrorsByAMC(errors);
+      setLoading(false);
+    };
+    fetchAll();
+  }, [activeTab]);
+
+  // Compute the top 5 AMCs by predicted 3Y return (descending)
+  const top5AMCEntries = React.useMemo(() => {
+    // Flatten to [amc, fund] pairs for AMCs with at least one fund
+    const entries: [string, any][] = Object.entries(topFundsByAMC)
+      .filter(([_, funds]) => Array.isArray(funds) && funds.length > 0)
+      .map(([amc, funds]) => [amc, funds[0]]); // Only use the top fund per AMC
+    // Sort by predicted 3Y return descending
+    entries.sort((a, b) => (b[1]?.returns_3yr ?? 0) - (a[1]?.returns_3yr ?? 0));
+    return entries.slice(0, 5);
+  }, [topFundsByAMC]);
+
+  // Example static distribution (should sum to 100)
+  const categoryDistribution: Record<string, number> = {
+    'Equity': 60,
+    'Hybrid': 15,
+    'Debt': 12,
+    'Solution Oriented': 8,
+    'Other': 5,
+  };
+  const selectedPercent = categoryDistribution[activeTab] || 0;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,7 +175,7 @@ export default function PortfolioScreen() {
           <TouchableOpacity style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>WEALTH DISTRIBUTION</Text>
+          <Text style={styles.headerTitle}>Top Mutual Fund Predictions</Text>
           <TouchableOpacity style={styles.profileButton}>
             <Ionicons name="person-add" size={20} color="black" />
           </TouchableOpacity>
@@ -62,25 +187,49 @@ export default function PortfolioScreen() {
           <Text style={styles.netWorthValue}>₹12,50,000</Text>
 
           <View style={styles.chartContainer}>
-            {/* Placeholder for Donut Chart */}
+            {/* Donut Chart with dynamic segment */}
             <View style={styles.donutChart}>
               <View style={styles.donutInner}>
-                <Text style={styles.chartLabel}>EQUITY</Text>
-                <Text style={styles.chartValue}>60<Text style={styles.percentSymbol}>%</Text></Text>
+                <Text style={styles.chartLabel}>{activeTab.toUpperCase()}</Text>
+                <Text style={styles.chartValue}>{selectedPercent}<Text style={styles.percentSymbol}>%</Text></Text>
                 <View style={styles.chartBadge}>
                   <Ionicons name="arrow-up" size={12} color="black" />
                   <Text style={styles.chartBadgeText}>+12.4%</Text>
                 </View>
               </View>
             </View>
-            {/* Simulated segments */}
-            <View style={[styles.segment, { transform: [{ rotate: '45deg' }] }]} />
+            {/* Simulated segments for each category */}
+            {/* Draw colored arcs for each category's percent */}
+            {Object.entries(categoryDistribution).map(([cat, percent], idx) => {
+              // Calculate rotation and color for each segment
+              const startAngle = Object.entries(categoryDistribution)
+                .slice(0, idx)
+                .reduce((sum, [, p]) => sum + p, 0) * 3.6 - 90; // -90 to start at top
+              const segmentColor = cat === activeTab ? '#111827' : '#E5E7EB';
+              return (
+                <View
+                  key={cat}
+                  style={[
+                    styles.segment,
+                    {
+                      borderTopColor: segmentColor,
+                      borderRightColor: segmentColor,
+                      transform: [
+                        { rotate: `${startAngle}deg` },
+                        { scaleX: percent / 100 },
+                      ],
+                    },
+                  ]}
+                />
+              );
+            })}
           </View>
         </View>
 
         {/* Tabs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabsContainer}>
-          {tabs.map((tab) => (
+
+          {tabs.map((tab: string) => (
             <TouchableOpacity
               key={tab}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
@@ -92,32 +241,35 @@ export default function PortfolioScreen() {
           ))}
         </ScrollView>
 
-        {/* Top Holdings */}
+        {/* Top Funds by AMC Section */}
         <View style={styles.holdingsContainer}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>TOP HOLDINGS</Text>
-            <TouchableOpacity>
-                <Ionicons name="filter" size={20} color="#9CA3AF" />
-            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>TOP FUNDS TO INVEST (by AMC)</Text>
           </View>
-
-          <View style={styles.holdingsList}>
-            {holdings.map((item) => (
-              <View key={item.id} style={styles.holdingCard}>
-                <View style={styles.holdingIcon}>
-                  <FontAwesome5 name={item.icon} size={20} color="black" />
-                </View>
-                <View style={styles.holdingInfo}>
-                  <Text style={styles.holdingName}>{item.name}</Text>
-                  <Text style={styles.holdingType}>{item.type}</Text>
-                </View>
-                <View style={styles.holdingValueContainer}>
-                  <Text style={styles.holdingValue}>{item.value}</Text>
-                  <Text style={styles.holdingChange}>{item.change}</Text>
+          {loading ? (
+            <Text style={{ color: '#000', textAlign: 'center', marginVertical: 24 }}>Loading predictions for all AMCs...</Text>
+          ) : (
+            top5AMCEntries.map(([amc, fund], idx) => (
+              <View key={amc} style={{ marginBottom: 24 }}>
+                <Text style={{ fontWeight: 'bold', color: '#111827', marginBottom: 8 }}>{amc}</Text>
+                <View style={styles.holdingsList}>
+                  <View style={styles.holdingCard}>
+                    <View style={styles.holdingIcon}>
+                      <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>{idx + 1}</Text>
+                    </View>
+                    <View style={styles.holdingInfo}>
+                      <Text style={styles.holdingName}>{fund.name || fund.fund_name}</Text>
+                      <Text style={styles.holdingType}>{activeTab}</Text>
+                    </View>
+                    <View style={styles.holdingValueContainer}>
+                      <Text style={styles.holdingValue}>{fund.returns_3yr != null ? `${fund.returns_3yr}%` : '--'}</Text>
+                      <Text style={styles.holdingChange}>Predicted 3Y Return</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-            ))}
-          </View>
+            ))
+          )}
         </View>
 
         {/* Spacer */}

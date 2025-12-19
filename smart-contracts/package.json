@@ -1,0 +1,18 @@
+{
+  "name": "sampatti-ai-blockchain",
+  "version": "1.0.0",
+  "description": "Smart contracts for Sampatti AI Mutual Fund Ecosystem",
+  "scripts": {
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.js --network mumbai"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.3.1"
+  }
+}
