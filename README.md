@@ -13,7 +13,8 @@
 <p align="center">
   <img src="https://github.com/user-attachments/assets/544271db-294a-48b5-82ac-51746d8115e9" width="40%" />
 </p>
-**Sampatti AI** is a comprehensive financial ecosystem designed to revolutionize mutual fund investing. It combines machine learning-based return predictions with a voice-enabled Generative AI advisor to help users make data-backed financial decisions.
+
+Sampatti AI is a comprehensive financial ecosystem designed to revolutionize mutual fund investing. It combines machine learning-based return predictions with a voice-enabled Generative AI advisor to help users make data-backed financial decisions.
 
 While the flagship experience is built natively for **macOS** using SwiftUI, Sampatti AI is a cross-platform solution. The predictive engine and AI backend serve a **Web App** and a **Mobile App**, ensuring users can access their financial insights from any device.
 
