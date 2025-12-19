@@ -1,14 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-<<<<<<< HEAD
 import { Send, History, Zap, Info } from 'lucide-react';
-=======
-import { Send, History } from 'lucide-react';
-import axios from 'axios';
+import LiquidGlassCard from './LiquidGlassCard';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
->>>>>>> d2bc173 (feat: markdown added)
-import LiquidGlassCard from './LiquidGlassCard';
 
 interface Message {
   role: 'user' | 'ai';
@@ -27,7 +22,6 @@ const SarthiInterface: React.FC = () => {
   const API_BASE_URL = "https://synapse-technex.onrender.com";
   const WS_BASE_URL = "wss://synapse-technex.onrender.com";
 
-<<<<<<< HEAD
   // 1. Fetch Message History via Fetch API
   useEffect(() => {
     const fetchHistory = async () => {
@@ -37,16 +31,6 @@ const SarthiInterface: React.FC = () => {
         const data = await response.json();
         const history = data.map((msg: any) => ({
           role: msg.role === 'model' ? 'ai' : 'user', // mapping DB roles to UI roles
-=======
-  // 1. Fetch Message History and Map to UI Roles
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/message-list/${sessionId}`);
-        // Mapping: 'model' -> 'ai', 'user' -> 'user'
-        const history = response.data.map((msg: any) => ({
-          role: msg.role === 'model' ? 'ai' : 'user', 
->>>>>>> d2bc173 (feat: markdown added)
           content: msg.content,
           timestamp: "Verified" // You can parse msg.id or add a timestamp field if available
         }));
